@@ -14,14 +14,14 @@
     - debug: msg="{{ docker_sysinfo.stdout.split('\n\') }}"
 
     - name: Get Docker Containers
-      command: /Users/yongsoon.loong/docker/ansible/awx/awx/installer/docker_container.sh
+      command: ./docker_container.sh
       register: docker_containers
 
     - debug: msg="{{ docker_containers.stdout.split('\n\') }}"
 
     - name: Remove Stopped Docker Containers
       when: docker_containers.stdout.find('Exited') != -1
-      command: /Users/yongsoon.loong/docker/ansible/awx/awx/installer/docker_rm.sh     
+      command: ./docker_rm.sh     
       register: docker_rm
 
     - name: Removed Stopped Docker Containers
@@ -40,7 +40,7 @@
   hosts: all
   tasks:
     - name: Create Docker Image for Ansible
-      command: /Users/yongsoon.loong/docker/ansible/awx/awx/installer/docker_create.sh
+      command: ./docker_create.sh
       register: docker_create
 
     - debug: msg="{{ docker_create.stdout.split('\n\') }}"
