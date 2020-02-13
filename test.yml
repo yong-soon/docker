@@ -1,0 +1,52 @@
+- name: Docker Host Check and Clean Up
+  hosts: all
+  tasks:
+    - name: Get Docker Version
+      command: docker version 
+      register: docker_output
+
+    - debug: msg="{{ docker_output.stdout.split('\n\') }}"
+
+    - name: Get Docker System Info
+      command: docker system info
+      register: docker_sysinfo
+
+    - debug: msg="{{ docker_sysinfo.stdout.split('\n\') }}"
+
+    - name: Get Docker Containers
+      command: /Users/yongsoon.loong/docker/ansible/awx/awx/installer/docker_container.sh
+      register: docker_containers
+
+    - debug: msg="{{ docker_containers.stdout.split('\n\') }}"
+
+    - name: Remove Stopped Docker Containers
+      when: docker_containers.stdout.find('Exited') != -1
+      command: /Users/yongsoon.loong/docker/ansible/awx/awx/installer/docker_rm.sh     
+      register: docker_rm
+
+    - name: Removed Stopped Docker Containers
+      debug: msg="{{ docker_rm.stdout.split('\n\') }}"
+      when: docker_rm.stdout is defined
+
+    - name: Get Docker Services
+      command: docker service ls
+      register: docker_service
+
+    - debug: msg="{{ docker_service.stdout.split('\n\') }}"
+
+
+
+- name: Docker Create Containers
+  hosts: all
+  tasks:
+    - name: Create Docker Image for Ansible
+      command: /Users/yongsoon.loong/docker/ansible/awx/awx/installer/docker_create.sh
+      register: docker_create
+
+    - debug: msg="{{ docker_create.stdout.split('\n\') }}"
+
+    - name: Check Docker Image Repository
+      command: docker image ls
+      register: docker_image
+
+    - debug: msg="{{ docker_image.stdout.split('\n\') }}"
